@@ -1,3 +1,5 @@
+require('dotenv').load();
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const store = require('./store')
@@ -12,49 +14,62 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
-	res.render(__dirname + '/views/index');
+	res.render(__dirname + '/views/index', {currentUser:store.getUser()});
 })
 
 app.get('/index.html', (req, res) => {
-	res.render(__dirname + '/views/index');
+	res.render(__dirname + '/views/index', {currentUser:store.getUser()});
 })
 
 app.get('/login', (req, res) => {
-	res.render(__dirname + '/views/login');
+	res.render(__dirname + '/views/login', {currentUser:store.getUser()});
 })
 
 app.get('/register', (req, res) => {
-	res.render(__dirname + '/views/register');
+	res.render(__dirname + '/views/register', {currentUser:store.getUser()});
 })
 
 app.get('/logout', (req, res) => {
-	res.render(__dirname + '/views/index');
+	store.logout()
+	.then(() => { 
+		res.render(__dirname + '/views/index', {currentUser:store.getUser()});
+	})
 })
 
 app.get('/profile', (req, res) => {
-	res.render(__dirname + '/views/profile');
+	res.render(__dirname + '/views/profile', {
+		currentUser:store.getUser(),
+		privilegeLevel:store.getPrivilege()
+	});
 })
 
 app.get('/about', (req, res) => {
-	res.render(__dirname + '/views/about');
+	res.render(__dirname + '/views/about', {
+		currentUser:store.getUser(),
+		privilegeLevel:store.getPrivilege()
+	});
 })
 
 app.get('/contact', (req, res) => {
-	res.render(__dirname + '/views/contact');
+	console.log(store.getUser())
+	res.render(__dirname + '/views/contact', {currentUser:store.getUser()});
 })
 
 app.post('/api/login', (req, res) => {
-	console.log(req.body)
 	store.login(
 		{
-			username: req.body.username,
-			password: req.body.password
+			user: req.body.username,
+			pass: req.body.password
 		}
 	)
-	.then(() => res.render(__dirname + '/views/profile', {currentUser:req.body.username}))
-	.catch((err) => res.render(__dirname + '/views/error', {
-		message: err
-	}))
+	.then(() =>
+		res.render(__dirname + '/views/profile',
+				{currentUser:store.getUser()})
+	)
+	.catch((err) =>
+		res.render(__dirname + '/views/error',
+				{message: err})
+	)
 })
 
 app.post('/api/register', (req, res) => {
@@ -62,17 +77,20 @@ app.post('/api/register', (req, res) => {
 	store.register(
 		{
 			name: req.body.name,
-			username: req.body.username,
-			password: req.body.password,
+			user: req.body.username,
+			pass: req.body.password,
 			confirmPassword: req.body.confirmPassword
 		}
 	)
-	.then(() => res.render(__dirname + '/views/profile'))
-	.catch((err) => res.render(__dirname + '/views/error', {
-		message: err
-	}))
+	.then(() => 
+		res.render(__dirname + '/views/profile',
+				{currentUser:store.getUser()})
+	)
+	.catch((err) => res.render(__dirname + '/views/error',
+				{message: err})
+	)
 })
 
 app.listen(7555, () => {
-  console.log('Server running on http://localhost:7555')
+	console.log('Server running on http://localhost:7555')
 })
