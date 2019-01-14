@@ -13,20 +13,24 @@ CREATE TABLE users(
 
 CREATE TABLE manageri(
 	id int PRIMARY KEY NOT NULL,
+	userid int,
 	nume char(64) NOT NULL,
 	prenume char(64),
 	data_nasterii datetime,
-	data_angajarii datetime
+	data_angajarii datetime,
+	FOREIGN KEY (userid) REFERENCES users(id)
 );
 
 CREATE TABLE ospatari(
 	id int PRIMARY KEY NOT NULL,
+	userid int,
 	manager_id int,
 	nume char(64) NOT NULL,
 	prenume char(64),
 	data_nasterii datetime,
 	data_angajarii datetime,
-	FOREIGN KEY (manager_id) REFERENCES manageri(id)
+	FOREIGN KEY (manager_id) REFERENCES manageri(id),
+	FOREIGN KEY (userid) REFERENCES users(id)
 );
 
 CREATE TABLE mese(
@@ -57,6 +61,11 @@ CREATE TABLE comanda_produs(
 	CHECK(status = 'nepreluata' or status = 'preluata'
 			or status = 'pregatita' or status = 'finalizata')
 );
+
+insert into users (id, user, pass, name) 
+	values (0, "root", "123", "root");
+insert into manageri (id, userid, nume, prenume) 
+	values (0, (SELECT id from users WHERE user='root'), "root", "root");
 
 -- CREATE TABLE AngajatiProiecte (
 -- 	AngajatID int,
