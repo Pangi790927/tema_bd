@@ -10,7 +10,12 @@ nav.navbar.navbar-fixed-top.navbar-dark.bg-inverse
 					a.nav-item.nav-link(href='/register') Sign Up
 				a.nav-item.nav-link(href='/about') About
 				a.nav-item.nav-link(href='/contact') Contact
-
+				if strPriv == "admin"
+					a.nav-item.nav-link(href='/admin-act') Admin actions
+				if strPriv == "worker" || strPriv == "admin"
+					a.nav-item.nav-link(href='/waiter-act') Waiter actions
+				if strPriv == "guest"
+					a.nav-item.nav-link(href='/delivery') Delivery
 				if !currentUser
 					a.nav-item.nav-link(href='/login') My Profile
 				else

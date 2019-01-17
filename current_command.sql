@@ -6,48 +6,46 @@ USE tema_restaurant;
 
 CREATE TABLE users(
 	id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	user char(64) NOT NULL,
+	user char(64) NOT NULL UNIQUE,
 	pass char(64),
 	name char(64)
 );
 
 CREATE TABLE manageri(
-	id int PRIMARY KEY NOT NULL,
-	userid int,
+	id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	userid int UNIQUE,
 	nume char(64) NOT NULL,
-	prenume char(64),
 	data_nasterii datetime,
 	data_angajarii datetime,
-	FOREIGN KEY (userid) REFERENCES users(id)
+	FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE ospatari(
-	id int PRIMARY KEY NOT NULL,
-	userid int,
+	id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	userid int UNIQUE,
 	manager_id int,
 	nume char(64) NOT NULL,
-	prenume char(64),
 	data_nasterii datetime,
 	data_angajarii datetime,
-	FOREIGN KEY (manager_id) REFERENCES manageri(id),
-	FOREIGN KEY (userid) REFERENCES users(id)
+	FOREIGN KEY (manager_id) REFERENCES manageri(id) ON DELETE CASCADE,
+	FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE mese(
-	id int PRIMARY KEY NOT NULL,
+	id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	numar int NOT NULL
 );
 
 CREATE TABLE comenzi(
-	id int PRIMARY KEY NOT NULL,
+	id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	ospatar_id int NOT NULL,
 	masa_id int NOT NULL,
-	FOREIGN KEY (masa_id) REFERENCES mese(id),
-	FOREIGN KEY (ospatar_id) REFERENCES ospatari(id)
+	FOREIGN KEY (masa_id) REFERENCES mese(id) ON DELETE CASCADE,
+	FOREIGN KEY (ospatar_id) REFERENCES ospatari(id) ON DELETE CASCADE
 );
 
 CREATE TABLE produse(
-	id int PRIMARY KEY NOT NULL,
+	id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	nume char(128) NOT NULL,
 	cost int NOT NULL
 );
@@ -56,16 +54,16 @@ CREATE TABLE comanda_produs(
 	produs_id int,
 	comanda_id int,
 	status char(32) DEFAULT 'nepreluata',
-	FOREIGN KEY (produs_id) REFERENCES produse(id),
-	FOREIGN KEY (comanda_id) REFERENCES comenzi(id),
+	FOREIGN KEY (produs_id) REFERENCES produse(id) ON DELETE CASCADE,
+	FOREIGN KEY (comanda_id) REFERENCES comenzi(id) ON DELETE CASCADE,
 	CHECK(status = 'nepreluata' or status = 'preluata'
 			or status = 'pregatita' or status = 'finalizata')
 );
 
 insert into users (id, user, pass, name) 
 	values (0, "root", "123", "root");
-insert into manageri (id, userid, nume, prenume) 
-	values (0, (SELECT id from users WHERE user='root'), "root", "root");
+insert into manageri (id, userid, nume) 
+	values (0, (SELECT id from users WHERE user='root'), "root");
 
 -- CREATE TABLE AngajatiProiecte (
 -- 	AngajatID int,

@@ -1,0 +1,44 @@
+extends layout
+
+block content
+  .main.container
+    .row.center-class
+      .col-md-8.col-md-offset-2
+        h1.display-4.m-b-2 Instructions
+        p As an waiter you can take the following actions:
+        .row
+          a.btn.btn-primary.m-b-2(data-toggle="collapse" href="#colapse-add-command" role="button" aria-expanded="false") Add a command
+          div.collapse#colapse-add-command
+            div#taggle-command 
+            button(style="height: 0px;")
+            div#toggle-additional
+    script.
+      document.addEventListener("DOMContentLoaded", function (event) {
+        auto_words = ["ceapa verde", "mamaliga", "supa de rosii", "snitele", "zacusca", "bere", "drojdie", "friptura", "galuste", "hrean", "icre", "eugenie","jalapeno", "lapte", "pere","varza"];
+        commandToggle = new Taggle('taggle-command');
+        containerCommand = $('#toggle-additional');
+        inputCommand = commandToggle.getInput();
+
+        $(inputCommand).autocomplete({
+          source: auto_words,
+          appendTo: containerCommand,
+          position: { at: "left bottom", of: containerCommand },
+          select: function(event, data) {
+            event.preventDefault();
+            //Add the tag if user clicks
+            if (event.which === 1) {
+                example4.add(data.item.value);
+            }
+          }
+        })
+      })
+
+    //- .row
+    //-   .col-md-8.col-md-offset-2
+    //-     button.btn.btn-success.m-b-2(action='/api/add-command') Add a command
+    //- .row
+    //-   .col-md-8.col-md-offset-2
+    //-     button.btn.btn-success.m-b-2(action='/api/remove-command') Remove a command
+    //- .row
+    //-   .col-md-8.col-md-offset-2
+    //-     button.btn.btn-success.m-b-2(action='/api/remove-command') See commands

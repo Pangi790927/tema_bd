@@ -1,0 +1,144 @@
+extends layout
+
+block content
+  .main.container
+    .row.center-class
+      .col-md-8.col-md-offset-2
+        h1.display-4.m-b-2 Admin Actions
+
+        p As an admin you can take the following actions:
+
+        //- p.display-4.m-b-2 Insert a new manager:
+        .row
+          a.btn.btn-primary.m-b-2(data-toggle="collapse" href="#colapse-manager-insert" role="button" aria-expanded="false") Insert a new manager
+          div.collapse#colapse-manager-insert
+            form(method='POST' action='/api/insert-manager')
+              div.form-group
+                label(for='manager_username') Manager Username
+                input.form-control(type='text' id='manager_username' placeholder='username' name='manager_username')
+              div.form-group
+                label(for='birthday') Manager Birthday
+                input.form-control(type='date' id='manage_birthday' placeholder='date' name='birthday')
+              div.form-group
+                label(for='employment_date') Mangager Employment Date
+                input.form-control(type='date' id='waiter_employment_date' placeholder='date' name='employment_date')
+              button.btn.btn-success(type='submit') Add Manager
+        .row
+          a.btn.btn-primary.m-b-2(data-toggle="collapse" href="#colapse-waiter-insert" role="button" aria-expanded="false") Insert a new waiter
+          div.collapse#colapse-waiter-insert
+            form(method='POST' action='/api/insert-waiter')
+              div.form-group
+                label(for='waiter_username') Waiter username
+                input.form-control(type='text' id='waiter_username' placeholder='username' name='waiter_username')
+              div.form-group
+                label(for='manager_username') Manager In Charge Username
+                input.form-control(type='text' id='in_charge_manager_username' placeholder='username' name='manager_username')
+              div.form-group
+                label(for='birthday') Waiter Birthday
+                input.form-control(type='date' id='waiter_birthday' placeholder='username' name='birthday')
+              div.form-group
+                label(for='employment_date') Waiter Employment date
+                input.form-control(type='date' id='waiter_employment_date' placeholder='date' name='employment_date')
+              button.btn.btn-success(type='submit') Add Waiter
+
+        .row
+          a.btn.btn-primary.m-b-2(data-toggle="collapse" href="#colapse-list-managers" role="button" aria-expanded="false") List All Managers
+          div.collapse#colapse-list-managers
+            button.btn.btn-success.m-b-2(onclick="updateManagerList()") List Managers
+            table.m-b-2(style='width:100%', border='1' id='manager_list')
+              thead#table_managers
+                tr
+                  th Manager Name
+                  th Manager Username
+                  th Birthday
+                  th Empoyment Date
+        .row
+          a.btn.btn-primary.m-b-2(data-toggle="collapse" href="#colapse-list-waiters" role="button" aria-expanded="false") List All Waiters
+          div.collapse#colapse-list-waiters
+            button.btn.btn-success.m-b-2(onclick="updateWaiterList()") List Waiters
+            table.m-b-2(style='width:100%', border='1' id='waiter_list')
+              thead#table_waiters
+                tr
+                  th Waiter Name
+                  th Waiter Username
+                  th Manager Username
+                  th Birthday
+                  th Empoyment Date
+        .row
+          a.btn.btn-primary.m-b-2(data-toggle="collapse" href="#colapse-remove-manager" role="button" aria-expanded="false") Remove a Manager
+          div.m-b-2.collapse#colapse-remove-manager
+            form(method='POST' action='/api/remove-manager')
+              div.form-group
+                label(for='waiter_username') Manager Username
+                input.form-control(type='text' id='manager_username' placeholder='username' name='manager_username')
+              button.btn.btn-success(type='submit') Remove Manager
+        .row
+          a.btn.btn-primary.m-b-2(data-toggle="collapse" href="#colapse-remove-waiter" role="button" aria-expanded="false") Remove a Waiter
+          div.m-b-2.collapse#colapse-remove-waiter
+            form(method='POST' action='/api/remove-waiter')
+              div.form-group
+                label(for='waiter_username') Waiter Username
+                input.form-control(type='text' id='waiter_username' placeholder='username' name='waiter_username')
+              button.btn.btn-success(type='submit') Remove Waiter
+  script.
+    function updateManagerList() {
+      $.ajax({
+        type: 'POST',
+        url: "api/list-managers",
+        success: function (data) {
+          let content = JSON.parse(data);
+          $("#table_managers").empty();
+          $("#table_managers").html(`
+            <tr>
+              <th>Manager Name</th>
+              <th>Manager Username</th>
+              <th>Birthday</th>
+              <th>Empoyment Date</th>
+            </tr>
+          `);
+          content.forEach((row) => {
+            $("#table_managers").append(`
+              <tr>
+                <td>${row.name}</td>
+                <td>${row.manager_username}</td>
+                <td>${row.birthday}</td>
+                <td>${row.employment_date}</td>
+              </tr>
+            `)
+          })
+          console.log("this is a log" + data)
+        }
+      })
+    };
+    function updateWaiterList() {
+      $.ajax({
+        type: 'POST',
+        url: "api/list-waiters",
+        success: function (data) {
+          let content = JSON.parse(data);
+          $("#table_waiters").empty();
+          $("#table_waiters").html(`
+            <tr>
+              <th>Waiter Name</th>
+              <th>Waiter Username</th>
+              <th>Manager Username</th>
+              <th>Birthday</th>
+              <th>Empoyment Date</th>
+            </tr>
+          `);
+          content.forEach((row) => {
+            $("#table_waiters").append(`
+              <tr>
+                <td>${row.name}</td>
+                <td>${row.waiter_username}</td>
+                <td>${row.manager_username}</td>
+                <td>${row.birthday}</td>
+                <td>${row.employment_date}</td>
+              </tr>
+            `)
+          })
+          console.log("this is a log" + data)
+        }
+      })
+    };
+
